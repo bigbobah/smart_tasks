@@ -7,12 +7,13 @@ contract SmartTaskDispatcher {
     struct SmartTask {
         uint id;
         uint bounty;
+        address owner;
         address assignee;
         bool is_active;  // hack to flag a presence of task inside of mapping
         TaskStatus status;
     }
 
-    mapping (address => mapping (uint => SmartTask)) public holdings;
+    mapping (uint => SmartTask) public tasks;
 
     function SmartTaskDispatcher() {
     }
@@ -24,13 +25,14 @@ contract SmartTaskDispatcher {
             msg.value is task bounty
         */
 
-        var task = holdings[msg.sender][task_id];
+        var task = tasks[task_id];
 
         require (task.status == TaskStatus.Canceled || !task.is_active);
 
-        holdings[msg.sender][task_id] = SmartTask({
+        tasks[task_id] = SmartTask({
             id: task_id,
             bounty: msg.value,
+            owner: msg.sender,
             assignee: 0,
             status: TaskStatus.New,
             is_active: true
@@ -43,11 +45,58 @@ contract SmartTaskDispatcher {
             returns the held ether to the owner
             marks the task as Canceled
         */
-        var task = holdings[msg.sender][task_id];
+        var task = tasks[task_id];
 
-        require (task.status == TaskStatus.New);
+        require (task.status == TaskStatus.New && task.owner == msg.sender);
 
         msg.sender.transfer(task.bounty);
         task.status = TaskStatus.Canceled;
+    }
+
+    function assignTask(uint task_id) external {
+        /*
+            Assign task to the message sender
+        */
+        var task = tasks[task_id];
+
+        require (task.status == TaskStatus.New);
+
+        task.assignee = msg.sender;
+        task.status = TaskStatus.Assigned;
+    }
+
+    function rollbackAssignment(uint task_id) external {
+        /*
+            Reset task assignee, make it available to cancel
+        */
+        var task = tasks[task_id];
+
+        require (task.status == TaskStatus.Assigned && task.assignee == msg.sender);
+
+        task.assignee = 0;
+        task.status = TaskStatus.New;
+    }
+
+    function resolveTask(uint task_id) external {
+        /*
+            Mark task as resolved, make in available to be accepted by owner
+        */
+        var task = tasks[task_id];
+
+        require (task.status == TaskStatus.Assigned && task.assignee == msg.sender);
+
+        task.status = TaskStatus.Resolved;
+    }
+
+    function acceptTask(uint task_id) external {
+        /*
+            Accept task and transfer the bounty amount to its assignee
+        */
+        var task = tasks[task_id];
+
+        require (task.status == TaskStatus.Resolved && task.owner == msg.sender);
+
+        task.status = TaskStatus.Accepted;
+        task.assignee.transfer(task.bounty);
     }
 }
