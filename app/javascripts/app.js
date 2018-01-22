@@ -6,11 +6,8 @@ import { default as Web3} from 'web3';
 import { default as contract } from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
-import metacoin_artifacts from '../../build/contracts/MetaCoin.json'
 import smarttaskdispatcher_artifacts from '../../build/contracts/SmartTaskDispatcher.json'
 
-// MetaCoin is our usable abstraction, which we'll use through the code below.
-var MetaCoin = contract(metacoin_artifacts);
 var SmartTaskDispatcher = contract(smarttaskdispatcher_artifacts);
 
 // The following code is simple to show off interacting with your contracts.
@@ -25,7 +22,6 @@ window.App = {
     var self = this;
 
     // Bootstrap the MetaCoin abstraction for Use.
-    MetaCoin.setProvider(web3.currentProvider);
     SmartTaskDispatcher.setProvider(web3.currentProvider);
 
     // Get the initial account balance so it can be displayed.
@@ -43,7 +39,9 @@ window.App = {
       accounts = accs;
       account = accounts[0];
 
-      self.refreshBalance();
+      $('#active-ethereum-account').text(web3.eth.coinbase);
+
+      // self.refreshBalance();
     });
   },
 

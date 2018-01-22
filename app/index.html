@@ -1,23 +1,183 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>MetaCoin - Truffle Webpack Demo w/ Frontend</title>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-  <script src="./app.js"></script>
+    <title>Smart Tasks</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+    <script src="./app.js"></script>
 </head>
 <body>
-  <h1>MetaCoin</h1>
-  <h2>Example Truffle Dapp</h2>
-  <h3>You have <span class="black"><span id="balance"></span> META</span></h3>
 
-  <br>
-  <h1>Send MetaCoin</h1>
-  <br><label for="amount">Amount:</label><input type="text" id="amount" placeholder="e.g., 95"></input>
-  <br><label for="receiver">To Address:</label><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
-  <br><br><button id="send" onclick="App.sendCoin()">Send MetaCoin</button>
-  <br><br>
-  <span id="status"></span>
-  <br>
-  <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
+
+<div class="container">
+
+    <h1>Smart Tasks</h1>
+
+    <p>Active Ethereum account: <span id="active-ethereum-account" style="font-weight: bold"></span></p>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="my-tasks-tab" data-toggle="tab" href="#my-tasks" role="tab"
+               aria-controls="my-tasks"
+               aria-selected="true">My tasks</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="tasks-assignee-tab" data-toggle="tab" href="#tasks-assignee" role="tab"
+               aria-controls="tasks-assignee"
+               aria-selected="false">Tasks assigned on me</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="open-tasks-tab" data-toggle="tab" href="#open-tasks" role="tab"
+               aria-controls="open-tasks"
+               aria-selected="false">Open tasks</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="my-tasks" role="tabpanel" aria-labelledby="my-tasks-tab">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Bounty</th>
+                    <th scope="col">Assignee</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Task Description</td>
+                    <td>2 eth</td>
+                    <td></td>
+                    <td>New</td>
+                    <td class="actions">
+                        <button class="btn btn-danger">Cancel</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Task Description</td>
+                    <td>2 eth</td>
+                    <td>some eth address</td>
+                    <td>Assigned</td>
+                    <td class="actions"></td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>Task Description</td>
+                    <td>2 eth</td>
+                    <td>some eth address</td>
+                    <td>Resolved</td>
+                    <td class="actions">
+                        <button class="btn btn-success">Accept</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">4</th>
+                    <td>Task Description</td>
+                    <td>2 eth</td>
+                    <td>some eth address</td>
+                    <td>Accepted</td>
+                    <td class="actions"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <form>
+                <h3>New Task</h3>
+                <div class="form-group">
+                    <label for="bounty">Task bounty (ETH)</label>
+                    <input type="number" class="form-control" id="bounty">
+                </div>
+                <div class="form-group">
+                    <label for="description">Task description</label>
+                    <textarea class="form-control" id="description" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Create</button>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="tasks-assignee" role="tabpanel" aria-labelledby="tasks-assignee-tab">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Bounty</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Task Description</td>
+                    <td>2 eth</td>
+                    <td>some eth address</td>
+                    <td>Assigned</td>
+                    <td class="actions">
+                        <button class="btn btn-danger">Cancel</button>
+                        <button class="btn btn-success">Resolve</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Task Description</td>
+                    <td>2 eth</td>
+                    <td>some eth address</td>
+                    <td>Resolved</td>
+                    <td class="actions"></td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>Task Description</td>
+                    <td>2 eth</td>
+                    <td>some eth address</td>
+                    <td>Accepted</td>
+                    <td class="actions"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane fade" id="open-tasks" role="tabpanel" aria-labelledby="open-tasks-tab">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Bounty</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Task Description</td>
+                    <td>2 eth</td>
+                    <td>some eth address</td>
+                    <td>New</td>
+                    <td class="actions">
+                        <button class="btn btn-success">Take</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</div><!-- /.container -->
+
 </body>
 </html>
