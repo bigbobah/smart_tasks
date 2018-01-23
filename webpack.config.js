@@ -30,7 +30,8 @@ module.exports = {
           presets: ['es2015'],
           plugins: ['transform-runtime']
         }
-      }
+      },
+      { test: /\.sol/, loader: 'truffle-solidity' }
     ]
   }
 }

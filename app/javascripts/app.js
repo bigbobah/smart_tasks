@@ -1,6 +1,3 @@
-// Import the page's CSS. Webpack will know what to do with it.
-import "../stylesheets/app.css";
-
 // Import libraries we need.
 import { default as Web3} from 'web3';
 import { default as contract } from 'truffle-contract'
@@ -22,7 +19,6 @@ window.App = {
   start: function() {
     var self = this;
 
-    // Bootstrap the MetaCoin abstraction for Use.
     SmartTaskDispatcher.setProvider(web3.currentProvider);
 
     // Get the initial account balance so it can be displayed.
