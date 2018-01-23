@@ -13,30 +13,35 @@ contract SmartTaskDispatcher {
         TaskStatus status;
     }
 
-    mapping (uint => SmartTask) public tasks;
+    SmartTask[] tasks;
 
     function SmartTaskDispatcher() {
     }
 
-    function createTask(uint task_id) external payable {
+    function getTasksCount() external view returns (uint) {
+        return tasks.length;
+    }
+
+    function getTask(uint index) external view returns (uint, uint, address, address, uint) {
+        var task = tasks[index];
+        return (task.id, task.bounty, task.owner, task.assignee, uint(task.status));
+    }
+
+    function createTask() external payable {
         /*
             Create a new task and hold its ether bounty
             msg.sender is task_owner
             msg.value is task bounty
         */
 
-        var task = tasks[task_id];
-
-        require (task.status == TaskStatus.Canceled || !task.is_active);
-
-        tasks[task_id] = SmartTask({
-            id: task_id,
+        tasks.push(SmartTask({
+            id: tasks.length,
             bounty: msg.value,
             owner: msg.sender,
             assignee: 0,
             status: TaskStatus.New,
             is_active: true
-        });
+        }));
     }
 
     function cancelTask(uint task_id) external {

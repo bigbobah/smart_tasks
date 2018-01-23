@@ -18,6 +18,7 @@ var account;
 var st;
 
 window.App = {
+  tasks: [],
   start: function() {
     var self = this;
 
@@ -41,7 +42,25 @@ window.App = {
 
       $('#active-ethereum-account').text(web3.eth.coinbase);
 
+      self.getTasks();
+
       // self.refreshBalance();
+    });
+  },
+
+  getTasks: function() {
+    var self = this;
+    SmartTaskDispatcher.deployed().then(function(instance) {
+      return instance.getTasksCount.call();
+    }).then(function(result) {
+      let tasks_count = result.c[0];
+      if (tasks_count) {
+
+      }
+      else {
+        self.tasks = [];
+      }
+      $('#tasks-count').text(self.tasks.length);
     });
   },
 
