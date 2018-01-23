@@ -66,7 +66,6 @@ window.App = {
         });
       });
 
-      // self.refreshBalance();
     });
   },
 
@@ -210,53 +209,6 @@ window.App = {
       $('tbody', '#assignee-tasks').html(self.assigneeTasks.map(renderAssigneeTasksRow).join(''));
       $('tbody', '#open-tasks').html(self.openTasks.map(renderOpenTasksRow).join(''));
       $('#tasks-count').text(self.tasks.length);
-    });
-  },
-
-  setStatus: function(message) {
-    var status = document.getElementById("status");
-    status.innerHTML = message;
-  },
-
-  refreshBalance: function() {
-    var self = this;
-
-    var meta;
-
-    SmartTaskDispatcher.deployed().then(function(instance) {
-      window.st=instance;
-    });
-
-    MetaCoin.deployed().then(function(instance) {
-      meta = instance;
-      return meta.getBalance.call(account, {from: account});
-    }).then(function(value) {
-      var balance_element = document.getElementById("balance");
-      balance_element.innerHTML = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error getting balance; see log.");
-    });
-  },
-
-  sendCoin: function() {
-    var self = this;
-
-    var amount = parseInt(document.getElementById("amount").value);
-    var receiver = document.getElementById("receiver").value;
-
-    this.setStatus("Initiating transaction... (please wait)");
-
-    var meta;
-    MetaCoin.deployed().then(function(instance) {
-      meta = instance;
-      return meta.sendCoin(receiver, amount, {from: account});
-    }).then(function() {
-      self.setStatus("Transaction complete!");
-      self.refreshBalance();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error sending coin; see log.");
     });
   }
 };
