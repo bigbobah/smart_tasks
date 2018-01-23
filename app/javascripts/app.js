@@ -41,6 +41,7 @@ window.App = {
       $('#active-ethereum-account').text(account);
 
       self.startMetamaskSync();
+      self.startBlockchainSync();
       self.getTasks();
 
       $('#create-task-button').click(function() {
@@ -64,6 +65,13 @@ window.App = {
         $('#active-ethereum-account').text(account);
       }
     }, 100);
+  },
+
+  startBlockchainSync: function() {
+    var self = this;
+    setInterval(function() {
+      self.getTasks();
+    }, 1500);
   },
 
   getTasks: function() {
