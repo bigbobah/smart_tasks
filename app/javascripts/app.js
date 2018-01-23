@@ -72,7 +72,7 @@ window.App = {
     var self = this;
     setInterval(function() {
       self.getTasks();
-    }, 1500);
+    }, 500);
   },
 
   getTasks: function() {
