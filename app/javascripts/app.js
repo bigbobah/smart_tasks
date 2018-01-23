@@ -16,6 +16,7 @@ var TASK_STATUSES = ["New", "Assigned", "Resolved", "Accepted", "Canceled"];
 
 window.App = {
   tasks: [],
+  myTasks: [],
   start: function() {
     var self = this;
 
@@ -51,6 +52,16 @@ window.App = {
         return false;
       });
 
+      $('a[role=tab]').click(function() {
+        let subcount = {
+          'all-tasks-tab': self.tasks,
+          'my-tasks-tab': self.myTasks,
+          'tasks-assignee-tab': [],
+          'open-tasks-tab': [],
+        }[$(this).attr('id')].length;
+        $('#tasks-subtotal-count').text(subcount);
+      });
+
       // self.refreshBalance();
     });
   },
@@ -81,6 +92,8 @@ window.App = {
     }).then(function(result) {
       let tasks_count = result.toNumber();
       $('#tasks-count').text(tasks_count);
+      if ($('#tasks-subtotal-count').text() == '')
+        $('#tasks-subtotal-count').text(tasks_count);
       if (tasks_count) {
         self.loadTasks(contract, tasks_count);
       }
@@ -132,14 +145,14 @@ window.App = {
 
     }
     Promise.all(promises).then(function() {
-      let sortedTasks = self.tasks.sort(function(a, b) {
+      self.tasks = self.tasks.sort(function(a, b) {
         return a.id > b.id;
       });
-      let myTasks = sortedTasks.filter(function(item) {
+      self.myTasks = self.tasks.filter(function(item) {
         return item.owner == account;
       });
-      $('tbody', '#all-tasks').html(sortedTasks.map(renderAllTasksRow).join(''));
-      $('tbody', '#my-tasks').html(myTasks.map(renderMyTasksRow).join(''));
+      $('tbody', '#all-tasks').html(self.tasks.map(renderAllTasksRow).join(''));
+      $('tbody', '#my-tasks').html(self.myTasks.map(renderMyTasksRow).join(''));
     });
   },
 
