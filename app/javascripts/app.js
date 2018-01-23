@@ -44,18 +44,26 @@ window.App = {
       self.startBlockchainSync();
       self.getTasks();
 
-      $('#create-task-button').click(function() {
-        SmartTaskDispatcher.deployed().then(function(instance) {
-          return instance.createTask({
-              from: account,
-              value: web3.toWei(Number($('#bounty').val()), "ether")
-          });
-        });
-        return false;
-      });
+      SmartTaskDispatcher.deployed().then(function(instance) {
 
-      $('a[role=tab]').click(function() {
-        self.updateSubcount($(this).attr('id'));
+        let contract = instance;
+
+        $('#create-task-button').click(function() {
+
+            return contract.createTask({
+                from: account,
+                value: web3.toWei(Number($('#bounty').val()), "ether")
+            });
+          });
+
+        $('a[role=tab]').click(function() {
+          self.updateSubcount($(this).attr('id'));
+        });
+
+        $('#my-tasks').on('click', '.cancel-button', function() {
+          let task_id = Number($(this).closest('tr').data('id')) - 1;
+          return contract.cancelTask(task_id, {from: account});
+        });
       });
 
       // self.refreshBalance();
@@ -97,7 +105,6 @@ window.App = {
       return instance.getTasksCount.call();
     }).then(function(result) {
       let tasks_count = result.toNumber();
-      $('#tasks-count').text(tasks_count);
       if (tasks_count) {
         self.loadTasks(contract, tasks_count).then(function() {
         self.updateSubcount();
@@ -122,14 +129,19 @@ window.App = {
     }
 
     function renderMyTasksRow(task) {
-      return '<tr>' +
+      let actions = '';
+      if (task.status === 0) {
+        // Display "Cancel" button only for tasks with status "New"
+        actions = '<button class="btn btn-danger cancel-button">Cancel</button>';
+      }
+      return '<tr data-id="' + task.id + '">' +
         '                    <td>' + task.id + '</td>' +
         '                    <td> - </td>' +
         '                    <td>' + task.bounty + ' ETH </td>' +
         '                    <td>' + task.assignee + '</td>' +
         '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
         '                    <td class="actions">' +
-        '                       <button class="btn btn-danger">Cancel</button>' +
+                                actions +
         '                    </td>' +
         '</tr>';
     }
@@ -197,6 +209,7 @@ window.App = {
       $('tbody', '#my-tasks').html(self.myTasks.map(renderMyTasksRow).join(''));
       $('tbody', '#assignee-tasks').html(self.assigneeTasks.map(renderAssigneeTasksRow).join(''));
       $('tbody', '#open-tasks').html(self.openTasks.map(renderOpenTasksRow).join(''));
+      $('#tasks-count').text(self.tasks.length);
     });
   },
 
