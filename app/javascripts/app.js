@@ -82,7 +82,7 @@ window.App = {
       contract = instance;
       return instance.getTasksCount.call();
     }).then(function(result) {
-      let tasks_count = result.c[0];
+      let tasks_count = result.toNumber();
       $('#tasks-count').text(tasks_count);
       if (tasks_count) {
         self.loadTasks(contract, tasks_count);
@@ -97,7 +97,7 @@ window.App = {
     function renderRow(task) {
       return '<tr>' +
         '                    <td>' + task.id + '</td>\n' +
-        '                    <td>' + task.bounty + '</td>\n' +
+        '                    <td>' + task.bounty + ' ETH </td>\n' +
         '                    <td>' + task.owner + '</td>\n' +
         '                    <td>' + task.assignee + '</td>\n' +
         '                    <td>' + task.status + '</td>' +
@@ -111,11 +111,11 @@ window.App = {
 
       var p = contract.tasks.call(i).then(function(data) {
         self.tasks.push({
-          id: data[0].c[0],
-          bounty: data[1].c[0],
+          id: data[0].toNumber(),
+          bounty: web3.fromWei(data[1].toNumber(), 'ether'),
           owner: data[2],
           assignee: data[3],
-          status: data[4].c[0]
+          status: data[4].toNumber()
         });
       });
       promises.push(p);
