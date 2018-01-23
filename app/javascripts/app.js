@@ -55,13 +55,7 @@ window.App = {
       });
 
       $('a[role=tab]').click(function() {
-        let subcount = {
-          'all-tasks-tab': self.tasks,
-          'my-tasks-tab': self.myTasks,
-          'assignee-tasks-tab': self.assigneeTasks,
-          'open-tasks-tab': self.openTasks,
-        }[$(this).attr('id')].length;
-        $('#tasks-subtotal-count').text(subcount);
+        self.updateSubcount($(this).attr('id'));
       });
 
       // self.refreshBalance();
@@ -84,6 +78,16 @@ window.App = {
     }, 2000);
   },
 
+  updateSubcount: function(id) {
+    let subcount = {
+      'all-tasks-tab': this.tasks,
+      'my-tasks-tab': this.myTasks,
+      'assignee-tasks-tab': this.assigneeTasks,
+      'open-tasks-tab': this.openTasks,
+    }[id || $('a[role=tab].active').attr('id')].length;
+    $('#tasks-subtotal-count').text(subcount);
+  },
+
   getTasks: function() {
     var self = this;
     var contract;
@@ -94,13 +98,14 @@ window.App = {
     }).then(function(result) {
       let tasks_count = result.toNumber();
       $('#tasks-count').text(tasks_count);
-      if ($('#tasks-subtotal-count').text() == '')
-        $('#tasks-subtotal-count').text(tasks_count);
       if (tasks_count) {
-        self.loadTasks(contract, tasks_count);
+        self.loadTasks(contract, tasks_count).then(function() {
+        self.updateSubcount();
+        });
       }
       else {
         self.tasks = [];
+        self.updateSubcount();
       }
     });
   },
@@ -173,7 +178,7 @@ window.App = {
       promises.push(p);
 
     }
-    Promise.all(promises).then(function() {
+    return Promise.all(promises).then(function() {
       self.tasks = self.tasks.sort(function(a, b) {
         return a.id > b.id;
       }).filter(function(item) {
