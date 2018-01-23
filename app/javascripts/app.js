@@ -17,6 +17,8 @@ var TASK_STATUSES = ["New", "Assigned", "Resolved", "Accepted", "Canceled"];
 window.App = {
   tasks: [],
   myTasks: [],
+  assigneeTasks: [],
+  openTasks: [],
   start: function() {
     var self = this;
 
@@ -56,8 +58,8 @@ window.App = {
         let subcount = {
           'all-tasks-tab': self.tasks,
           'my-tasks-tab': self.myTasks,
-          'tasks-assignee-tab': [],
-          'open-tasks-tab': [],
+          'assignee-tasks-tab': self.assigneeTasks,
+          'open-tasks-tab': self.openTasks,
         }[$(this).attr('id')].length;
         $('#tasks-subtotal-count').text(subcount);
       });
@@ -127,6 +129,33 @@ window.App = {
         '</tr>';
     }
 
+    function renderAssigneeTasksRow(task) {
+      return '<tr>' +
+        '                    <td>' + task.id + '</td>' +
+        '                    <td> - </td>' +
+        '                    <td>' + task.bounty + ' ETH </td>' +
+        '                    <td>' + task.owner + '</td>' +
+        '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
+        '                    <td class="actions">' +
+        '                       <button class="btn btn-danger">Cancel</button>' +
+        '                       <button class="btn btn-success">Resolve</button>' +
+        '                    </td>' +
+        '</tr>';
+    }
+
+    function renderOpenTasksRow(task) {
+      return '<tr>' +
+        '                    <td>' + task.id + '</td>' +
+        '                    <td> - </td>' +
+        '                    <td>' + task.bounty + ' ETH </td>' +
+        '                    <td>' + task.owner + '</td>' +
+        '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
+        '                    <td class="actions">' +
+        '                       <button class="btn btn-success">Take</button>' +
+        '                    </td>' +
+        '</tr>';
+    }
+
     var self = this;
     self.tasks = [];
     var promises = [];
@@ -137,7 +166,7 @@ window.App = {
           id: data[0].toNumber(),
           bounty: web3.fromWei(data[1].toNumber(), 'ether'),
           owner: data[2],
-          assignee: data[3] == '0x0000000000000000000000000000000000000000' ? '-' : data[3],
+          assignee: data[3] === '0x0000000000000000000000000000000000000000' ? '-' : data[3],
           status: data[4].toNumber()
         });
       });
@@ -147,12 +176,22 @@ window.App = {
     Promise.all(promises).then(function() {
       self.tasks = self.tasks.sort(function(a, b) {
         return a.id > b.id;
+      }).filter(function(item) {
+        return item.status !== 4; // Exclude canceled tasks
       });
       self.myTasks = self.tasks.filter(function(item) {
-        return item.owner == account;
+        return item.owner === account;
+      });
+      self.assigneeTasks = self.tasks.filter(function(item) {
+        return item.assignee === account;
+      });
+      self.openTasks = self.tasks.filter(function(item) {
+        return item.status === 0;
       });
       $('tbody', '#all-tasks').html(self.tasks.map(renderAllTasksRow).join(''));
       $('tbody', '#my-tasks').html(self.myTasks.map(renderMyTasksRow).join(''));
+      $('tbody', '#assignee-tasks').html(self.assigneeTasks.map(renderAssigneeTasksRow).join(''));
+      $('tbody', '#open-tasks').html(self.openTasks.map(renderOpenTasksRow).join(''));
     });
   },
 

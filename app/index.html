@@ -42,8 +42,8 @@
                aria-selected="true">My tasks</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="tasks-assignee-tab" data-toggle="tab" href="#tasks-assignee" role="tab"
-               aria-controls="tasks-assignee"
+            <a class="nav-link" id="assignee-tasks-tab" data-toggle="tab" href="#assignee-tasks" role="tab"
+               aria-controls="assignee-tasks"
                aria-selected="false">Tasks assigned on me</a>
         </li>
         <li class="nav-item">
@@ -89,42 +89,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Task Description</td>
-                    <td>2 eth</td>
-                    <td></td>
-                    <td>New</td>
-                    <td class="actions">
-                        <button class="btn btn-danger">Cancel</button>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Task Description</td>
-                    <td>2 eth</td>
-                    <td>some eth address</td>
-                    <td>Assigned</td>
-                    <td class="actions"></td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Task Description</td>
-                    <td>2 eth</td>
-                    <td>some eth address</td>
-                    <td>Resolved</td>
-                    <td class="actions">
-                        <button class="btn btn-success">Accept</button>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">4</th>
-                    <td>Task Description</td>
-                    <td>2 eth</td>
-                    <td>some eth address</td>
-                    <td>Accepted</td>
-                    <td class="actions"></td>
-                </tr>
                 </tbody>
             </table>
 
@@ -141,7 +105,7 @@
                 <button type="submit" class="btn btn-primary mb-2" id="create-task-button">Create</button>
             </form>-->
         </div>
-        <div class="tab-pane fade" id="tasks-assignee" role="tabpanel" aria-labelledby="tasks-assignee-tab">
+        <div class="tab-pane fade" id="assignee-tasks" role="tabpanel" aria-labelledby="assignee-tasks-tab">
             <table class="table">
                 <thead>
                 <tr>
@@ -154,33 +118,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Task Description</td>
-                    <td>2 eth</td>
-                    <td>some eth address</td>
-                    <td>Assigned</td>
-                    <td class="actions">
-                        <button class="btn btn-danger">Cancel</button>
-                        <button class="btn btn-success">Resolve</button>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Task Description</td>
-                    <td>2 eth</td>
-                    <td>some eth address</td>
-                    <td>Resolved</td>
-                    <td class="actions"></td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Task Description</td>
-                    <td>2 eth</td>
-                    <td>some eth address</td>
-                    <td>Accepted</td>
-                    <td class="actions"></td>
-                </tr>
                 </tbody>
             </table>
         </div>
@@ -197,16 +134,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Task Description</td>
-                    <td>2 eth</td>
-                    <td>some eth address</td>
-                    <td>New</td>
-                    <td class="actions">
-                        <button class="btn btn-success">Take</button>
-                    </td>
-                </tr>
                 </tbody>
             </table>
         </div>
