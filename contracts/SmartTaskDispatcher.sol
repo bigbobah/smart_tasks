@@ -13,18 +13,13 @@ contract SmartTaskDispatcher {
         TaskStatus status;
     }
 
-    SmartTask[] tasks;
+    SmartTask[] public tasks;
 
     function SmartTaskDispatcher() {
     }
 
     function getTasksCount() external view returns (uint) {
         return tasks.length;
-    }
-
-    function getTask(uint index) external view returns (uint, uint, address, address, uint) {
-        var task = tasks[index];
-        return (task.id, task.bounty, task.owner, task.assignee, uint(task.status));
     }
 
     function createTask() external payable {
