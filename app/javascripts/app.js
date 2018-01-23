@@ -68,7 +68,7 @@ window.App = {
     var self = this;
     setInterval(function() {
       self.getTasks();
-    }, 500);
+    }, 2000);
   },
 
   getTasks: function() {
@@ -91,13 +91,26 @@ window.App = {
   },
 
   loadTasks: function(contract, count) {
-    function renderRow(task) {
+    function renderAllTasksRow(task) {
       return '<tr>' +
-        '                    <td>' + task.id + '</td>\n' +
-        '                    <td>' + task.bounty + ' ETH </td>\n' +
-        '                    <td>' + task.owner + '</td>\n' +
-        '                    <td>' + task.assignee + '</td>\n' +
+        '                    <td>' + task.id + '</td>' +
+        '                    <td>' + task.bounty + ' ETH </td>' +
+        '                    <td>' + task.owner + '</td>' +
+        '                    <td>' + task.assignee + '</td>' +
         '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
+        '</tr>';
+    }
+
+    function renderMyTasksRow(task) {
+      return '<tr>' +
+        '                    <td>' + task.id + '</td>' +
+        '                    <td> - </td>' +
+        '                    <td>' + task.bounty + ' ETH </td>' +
+        '                    <td>' + task.assignee + '</td>' +
+        '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
+        '                    <td class="actions">' +
+        '                       <button class="btn btn-danger">Cancel</button>' +
+        '                    </td>' +
         '</tr>';
     }
 
@@ -111,7 +124,7 @@ window.App = {
           id: data[0].toNumber(),
           bounty: web3.fromWei(data[1].toNumber(), 'ether'),
           owner: data[2],
-          assignee: data[3],
+          assignee: data[3] == '0x0000000000000000000000000000000000000000' ? '-' : data[3],
           status: data[4].toNumber()
         });
       });
@@ -119,9 +132,14 @@ window.App = {
 
     }
     Promise.all(promises).then(function() {
-      $('tbody', '#all-tasks').html(self.tasks.sort(function(a, b) {
+      let sortedTasks = self.tasks.sort(function(a, b) {
         return a.id > b.id;
-      }).map(renderRow).join(''));
+      });
+      let myTasks = sortedTasks.filter(function(item) {
+        return item.owner == account;
+      });
+      $('tbody', '#all-tasks').html(sortedTasks.map(renderAllTasksRow).join(''));
+      $('tbody', '#my-tasks').html(myTasks.map(renderMyTasksRow).join(''));
     });
   },
 
