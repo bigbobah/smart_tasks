@@ -15,6 +15,7 @@ var SmartTaskDispatcher = contract(smarttaskdispatcher_artifacts);
 // For application bootstrapping, check out window.addEventListener below.
 var accounts;
 var account;
+var TASK_STATUSES = ["New", "Assigned", "Resolved", "Accepted", "Canceled"];
 
 window.App = {
   tasks: [],
@@ -100,7 +101,7 @@ window.App = {
         '                    <td>' + task.bounty + ' ETH </td>\n' +
         '                    <td>' + task.owner + '</td>\n' +
         '                    <td>' + task.assignee + '</td>\n' +
-        '                    <td>' + task.status + '</td>' +
+        '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
         '</tr>';
     }
 
