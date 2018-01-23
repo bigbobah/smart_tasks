@@ -15,7 +15,6 @@ var SmartTaskDispatcher = contract(smarttaskdispatcher_artifacts);
 // For application bootstrapping, check out window.addEventListener below.
 var accounts;
 var account;
-var st;
 
 window.App = {
   tasks: [],
@@ -39,29 +38,53 @@ window.App = {
 
       accounts = accs;
       account = accounts[0];
+      $('#active-ethereum-account').text(account);
 
-      $('#active-ethereum-account').text(web3.eth.coinbase);
-
+      self.startMetamaskSync();
       self.getTasks();
+
+      $('#create-task-button').click(function() {
+        SmartTaskDispatcher.deployed().then(function(instance) {
+          return instance.createTask({
+              from: account,
+              value: web3.toWei(Number($('#bounty').val()), "ether")
+          });
+        });
+        return false;
+      });
 
       // self.refreshBalance();
     });
   },
 
+  startMetamaskSync: function() {
+    setInterval(function() {
+      if (web3.eth.accounts[0] !== account) {
+        account = web3.eth.accounts[0];
+        $('#active-ethereum-account').text(account);
+      }
+    }, 100);
+  },
+
   getTasks: function() {
     var self = this;
     SmartTaskDispatcher.deployed().then(function(instance) {
+      window.st = instance;
       return instance.getTasksCount.call();
     }).then(function(result) {
       let tasks_count = result.c[0];
+      $('#tasks-count').text(tasks_count);
       if (tasks_count) {
-
+        self.loadTasks();
       }
       else {
         self.tasks = [];
       }
-      $('#tasks-count').text(self.tasks.length);
     });
+  },
+
+  loadTasks: function() {
+
   },
 
   setStatus: function(message) {
