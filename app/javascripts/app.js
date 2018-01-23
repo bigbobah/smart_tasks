@@ -115,7 +115,7 @@ window.App = {
           bounty: data[1].c[0],
           owner: data[2],
           assignee: data[3],
-          status: data[5].c[0]
+          status: data[4].c[0]
         });
       });
       promises.push(p);

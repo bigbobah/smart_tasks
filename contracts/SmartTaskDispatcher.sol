@@ -9,8 +9,8 @@ contract SmartTaskDispatcher {
         uint bounty;
         address owner;
         address assignee;
-        bool is_active;  // hack to flag a presence of task inside of mapping
         TaskStatus status;
+        uint rejected_on;
     }
 
     SmartTask[] public tasks;
@@ -35,7 +35,7 @@ contract SmartTaskDispatcher {
             owner: msg.sender,
             assignee: 0,
             status: TaskStatus.New,
-            is_active: true
+            rejected_on: 0
         }));
     }
 
@@ -86,6 +86,18 @@ contract SmartTaskDispatcher {
         require (task.status == TaskStatus.Assigned && task.assignee == msg.sender);
 
         task.status = TaskStatus.Resolved;
+    }
+
+    function rejectTask(uint task_id) external {
+        /*
+            Rollback status task to Assigned, meaning that owner is not satisfied by the task result
+        */
+        var task = tasks[task_id];
+
+        require (task.status == TaskStatus.Resolved && task.owner == msg.sender);
+
+        task.status = TaskStatus.Assigned;
+        task.rejected_on = now;
     }
 
     function acceptTask(uint task_id) external {
