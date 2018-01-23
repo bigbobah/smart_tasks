@@ -119,7 +119,9 @@ window.App = {
 
     }
     Promise.all(promises).then(function() {
-      $('tbody', '#all-tasks').html(self.tasks.map(renderRow).join(''));
+      $('tbody', '#all-tasks').html(self.tasks.sort(function(a, b) {
+        return a.id > b.id;
+      }).map(renderRow).join(''));
     });
   },
 
