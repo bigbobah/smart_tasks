@@ -76,14 +76,16 @@ window.App = {
 
   getTasks: function() {
     var self = this;
+    var contract;
     SmartTaskDispatcher.deployed().then(function(instance) {
       window.st = instance;
+      contract = instance;
       return instance.getTasksCount.call();
     }).then(function(result) {
       let tasks_count = result.c[0];
       $('#tasks-count').text(tasks_count);
       if (tasks_count) {
-        self.loadTasks();
+        self.loadTasks(contract, tasks_count);
       }
       else {
         self.tasks = [];
@@ -91,8 +93,37 @@ window.App = {
     });
   },
 
-  loadTasks: function() {
+  loadTasks: function(contract, count) {
+    function renderRow(task) {
+      return '<tr>' +
+        '                    <td>' + task.id + '</td>\n' +
+        '                    <td>' + task.bounty + '</td>\n' +
+        '                    <td>' + task.owner + '</td>\n' +
+        '                    <td>' + task.assignee + '</td>\n' +
+        '                    <td>' + task.status + '</td>' +
+        '</tr>';
+    }
 
+    var self = this;
+    self.tasks = [];
+    var promises = [];
+    for (var i = 0; i < count; i++) {
+
+      var p = contract.tasks.call(i).then(function(data) {
+        self.tasks.push({
+          id: data[0].c[0],
+          bounty: data[1].c[0],
+          owner: data[2],
+          assignee: data[3],
+          status: data[5].c[0]
+        });
+      });
+      promises.push(p);
+
+    }
+    Promise.all(promises).then(function() {
+      $('tbody', '#all-tasks').html(self.tasks.map(renderRow).join(''));
+    });
   },
 
   setStatus: function(message) {

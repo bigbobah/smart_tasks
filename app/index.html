@@ -25,7 +25,12 @@
 
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="my-tasks-tab" data-toggle="tab" href="#my-tasks" role="tab"
+            <a class="nav-link active" id="all-tasks-tab" data-toggle="tab" href="#all-tasks" role="tab"
+               aria-controls="all-tasks"
+               aria-selected="true">All tasks list (my small debugging tab)</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="my-tasks-tab" data-toggle="tab" href="#my-tasks" role="tab"
                aria-controls="my-tasks"
                aria-selected="true">My tasks</a>
         </li>
@@ -41,7 +46,30 @@
         </li>
     </ul>
     <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="my-tasks" role="tabpanel" aria-labelledby="my-tasks-tab">
+        <div class="tab-pane fade show active" id="all-tasks" role="tabpanel" aria-labelledby="all-tasks-tab">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Bounty</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Assignee</th>
+                    <th scope="col">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <form>
+                <div class="form-group">
+                    <label for="bounty">Create task with bounty (ETH):</label>
+                    <input type="number" class="form-control" id="bounty" value="1">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2" id="create-task-button">Create</button>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="my-tasks" role="tabpanel" aria-labelledby="my-tasks-tab">
             <table class="table">
                 <thead>
                 <tr>
@@ -93,7 +121,7 @@
                 </tbody>
             </table>
 
-            <form>
+            <!--<form>
                 <h3>New Task</h3>
                 <div class="form-group">
                     <label for="bounty">Task bounty (ETH)</label>
@@ -104,7 +132,7 @@
                     <textarea class="form-control" id="description" rows="3"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary mb-2" id="create-task-button">Create</button>
-            </form>
+            </form>-->
         </div>
         <div class="tab-pane fade" id="tasks-assignee" role="tabpanel" aria-labelledby="tasks-assignee-tab">
             <table class="table">
