@@ -64,6 +64,11 @@ window.App = {
           let task_id = Number($(this).closest('tr').data('id')) - 1;
           return contract.cancelTask(task_id, {from: account});
         });
+
+        $('#open-tasks').on('click', '.take-task-button', function() {
+          let task_id = Number($(this).closest('tr').data('id')) - 1;
+          return contract.assignTask(task_id, {from: account});
+        });
       });
 
     });
@@ -154,7 +159,7 @@ window.App = {
     }
 
     function renderAssigneeTasksRow(task) {
-      return '<tr>' +
+      return '<tr data-id="' + task.id + '">' +
         '                    <td>' + task.id + '</td>' +
         '                    <td> - </td>' +
         '                    <td>' + task.bounty + ' ETH </td>' +
@@ -168,14 +173,14 @@ window.App = {
     }
 
     function renderOpenTasksRow(task) {
-      return '<tr>' +
+      return '<tr data-id="' + task.id + '">' +
         '                    <td>' + task.id + '</td>' +
         '                    <td> - </td>' +
         '                    <td>' + task.bounty + ' ETH </td>' +
         '                    <td>' + task.owner + '</td>' +
         '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
         '                    <td class="actions">' +
-        '                       <button class="btn btn-success">Take</button>' +
+        '                       <button class="btn btn-success take-task-button">Take</button>' +
         '                    </td>' +
         '</tr>';
     }
