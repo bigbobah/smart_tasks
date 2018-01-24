@@ -222,12 +222,12 @@ window.App = {
     }
 
     var self = this;
-    self.tasks = [];
+    var tasks = [];
     var promises = [];
     for (var i = 0; i < count; i++) {
 
       var p = contract.tasks.call(i).then(function(data) {
-        self.tasks.push({
+        tasks.push({
           id: data[0].toNumber(),
           bounty: web3.fromWei(data[1].toNumber(), 'ether'),
           owner: data[2],
@@ -240,10 +240,10 @@ window.App = {
 
     }
     return Promise.all(promises).then(function() {
-      self.tasks = self.tasks.sort(function(a, b) {
-        return a.id > b.id;
-      }).filter(function(item) {
+      self.tasks = tasks.filter(function(item) {
         return item.status !== 4; // Exclude canceled tasks
+      }).sort(function(a, b) {
+        return a.id > b.id;
       });
       self.myTasks = self.tasks.filter(function(item) {
         return item.owner === account;
