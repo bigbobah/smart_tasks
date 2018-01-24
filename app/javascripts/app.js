@@ -38,7 +38,7 @@ window.App = {
 
       accounts = accs;
       account = accounts[0];
-      $('#active-ethereum-account').text(account);
+      self.updateAccStats();
 
       self.startMetamaskSync();
       self.startBlockchainSync();
@@ -69,11 +69,19 @@ window.App = {
     });
   },
 
+  updateAccStats: function() {
+    $('#active-ethereum-account').text(account);
+    web3.eth.getBalance(account, function(error, response) {
+      $('#balance').text(web3.fromWei(response.toNumber(), "ether"));
+    });
+  },
+
   startMetamaskSync: function() {
+    let self = this;
     setInterval(function() {
       if (web3.eth.accounts[0] !== account) {
         account = web3.eth.accounts[0];
-        $('#active-ethereum-account').text(account);
+        self.updateAccStats();
       }
     }, 100);
   },
