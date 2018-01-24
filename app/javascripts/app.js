@@ -69,10 +69,15 @@ window.App = {
           return contract.assignTask(task_id, {from: account});
         });
 
-        $('#assignee-tasks').on('click', '.cancel-button', function() {
-          let task_id = Number($(this).closest('tr').data('id')) - 1;
-          return contract.rollbackAssignment(task_id, {from: account});
-        });
+        $('#assignee-tasks')
+          .on('click', '.cancel-button', function() {
+            let task_id = Number($(this).closest('tr').data('id')) - 1;
+            return contract.rollbackAssignment(task_id, {from: account});
+          })
+          .on('click', '.resolve-button', function() {
+            let task_id = Number($(this).closest('tr').data('id')) - 1;
+            return contract.resolveTask(task_id, {from: account});
+          });
       });
 
     });
@@ -165,10 +170,10 @@ window.App = {
     function renderAssigneeTasksRow(task) {
       let actions = '';
       if (task.status === 1) {
-        // Display "Cancel" button only for tasks with status "Assigned"
-        actions += '<button class="btn btn-danger cancel-button">Cancel</button>';
+        // Display "Cancel" and "Resolve" buttons only for tasks with status "Assigned"
+        actions += '<button class="btn btn-danger cancel-button">Cancel</button> ';
+        actions += '<button class="btn btn-success resolve-button">Resolve</button>';
       }
-      actions += '<button class="btn btn-success">Resolve</button>';
       return '<tr data-id="' + task.id + '">' +
         '                    <td>' + task.id + '</td>' +
         '                    <td> - </td>' +
