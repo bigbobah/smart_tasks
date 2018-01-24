@@ -155,13 +155,20 @@ window.App = {
     return TASK_STATUSES[task.status];
   },
 
+  formatETHAddress(address) {
+    if (address == '-') {
+      return address;
+    }
+    return address.substr(0, 20) + '...';
+  },
+
   loadTasks: function(contract, count) {
     function renderAllTasksRow(task) {
       return '<tr>' +
         '                    <td>' + task.id + '</td>' +
         '                    <td>' + task.bounty + ' ETH </td>' +
-        '                    <td>' + task.owner + '</td>' +
-        '                    <td>' + task.assignee + '</td>' +
+        '                    <td>' + self.formatETHAddress(task.owner) + '</td>' +
+        '                    <td>' + self.formatETHAddress(task.assignee) + '</td>' +
         '                    <td>' + self.getTaskStatus(task) + '</td>' +
         '</tr>';
     }
@@ -181,7 +188,7 @@ window.App = {
         '                    <td>' + task.id + '</td>' +
         '                    <td> - </td>' +
         '                    <td>' + task.bounty + ' ETH </td>' +
-        '                    <td>' + task.assignee + '</td>' +
+        '                    <td>' + self.formatETHAddress(task.assignee) + '</td>' +
         '                    <td>' + self.getTaskStatus(task) + '</td>' +
         '                    <td class="actions">' +
                                 actions +
@@ -200,7 +207,7 @@ window.App = {
         '                    <td>' + task.id + '</td>' +
         '                    <td> - </td>' +
         '                    <td>' + task.bounty + ' ETH </td>' +
-        '                    <td>' + task.owner + '</td>' +
+        '                    <td>' + self.formatETHAddress(task.owner) + '</td>' +
         '                    <td>' + self.getTaskStatus(task) + '</td>' +
         '                    <td class="actions">' +
                                 actions +
@@ -213,7 +220,7 @@ window.App = {
         '                    <td>' + task.id + '</td>' +
         '                    <td> - </td>' +
         '                    <td>' + task.bounty + ' ETH </td>' +
-        '                    <td>' + task.owner + '</td>' +
+        '                    <td>' + self.formatETHAddress(task.owner) + '</td>' +
         '                    <td>' + self.getTaskStatus(task) + '</td>' +
         '                    <td class="actions">' +
         '                       <button class="btn btn-success take-task-button">Take</button>' +
