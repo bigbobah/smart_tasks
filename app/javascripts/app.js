@@ -59,10 +59,19 @@ window.App = {
           self.updateSubcount($(this).attr('id'));
         });
 
-        $('#my-tasks').on('click', '.cancel-button', function() {
-          let task_id = Number($(this).closest('tr').data('id')) - 1;
-          return contract.cancelTask(task_id, {from: account});
-        });
+        $('#my-tasks')
+          .on('click', '.cancel-button', function() {
+            let task_id = Number($(this).closest('tr').data('id')) - 1;
+            return contract.cancelTask(task_id, {from: account});
+          })
+          .on('click', '.reject-button', function() {
+            let task_id = Number($(this).closest('tr').data('id')) - 1;
+            return contract.rejectTask(task_id, {from: account});
+          })
+          .on('click', '.accept-button', function() {
+            let task_id = Number($(this).closest('tr').data('id')) - 1;
+            return contract.acceptTask(task_id, {from: account});
+          });
 
         $('#open-tasks').on('click', '.take-task-button', function() {
           let task_id = Number($(this).closest('tr').data('id')) - 1;
@@ -104,6 +113,7 @@ window.App = {
     var self = this;
     setInterval(function() {
       self.getTasks();
+      self.updateAccStats();
     }, 2000);
   },
 
@@ -138,6 +148,13 @@ window.App = {
     });
   },
 
+  getTaskStatus: function(task) {
+    if (task.status === 1 /* Assigned */ && task.rejected_on) {
+      return 'Rejected';
+    }
+    return TASK_STATUSES[task.status];
+  },
+
   loadTasks: function(contract, count) {
     function renderAllTasksRow(task) {
       return '<tr>' +
@@ -145,7 +162,7 @@ window.App = {
         '                    <td>' + task.bounty + ' ETH </td>' +
         '                    <td>' + task.owner + '</td>' +
         '                    <td>' + task.assignee + '</td>' +
-        '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
+        '                    <td>' + self.getTaskStatus(task) + '</td>' +
         '</tr>';
     }
 
@@ -155,12 +172,17 @@ window.App = {
         // Display "Cancel" button only for tasks with status "New"
         actions = '<button class="btn btn-danger cancel-button">Cancel</button>';
       }
+      else if (task.status === 2) {
+        // Display "Reject" & "Accept" buttons only for tasks with status "Resolved"
+        actions += '<button class="btn btn-danger reject-button">Reject</button> ';
+        actions += '<button class="btn btn-success accept-button">Accept</button>';
+      }
       return '<tr data-id="' + task.id + '">' +
         '                    <td>' + task.id + '</td>' +
         '                    <td> - </td>' +
         '                    <td>' + task.bounty + ' ETH </td>' +
         '                    <td>' + task.assignee + '</td>' +
-        '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
+        '                    <td>' + self.getTaskStatus(task) + '</td>' +
         '                    <td class="actions">' +
                                 actions +
         '                    </td>' +
@@ -179,7 +201,7 @@ window.App = {
         '                    <td> - </td>' +
         '                    <td>' + task.bounty + ' ETH </td>' +
         '                    <td>' + task.owner + '</td>' +
-        '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
+        '                    <td>' + self.getTaskStatus(task) + '</td>' +
         '                    <td class="actions">' +
                                 actions +
         '                    </td>' +
@@ -192,7 +214,7 @@ window.App = {
         '                    <td> - </td>' +
         '                    <td>' + task.bounty + ' ETH </td>' +
         '                    <td>' + task.owner + '</td>' +
-        '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
+        '                    <td>' + self.getTaskStatus(task) + '</td>' +
         '                    <td class="actions">' +
         '                       <button class="btn btn-success take-task-button">Take</button>' +
         '                    </td>' +
@@ -210,7 +232,8 @@ window.App = {
           bounty: web3.fromWei(data[1].toNumber(), 'ether'),
           owner: data[2],
           assignee: data[3] === '0x0000000000000000000000000000000000000000' ? '-' : data[3],
-          status: data[4].toNumber()
+          status: data[4].toNumber(),
+          rejected_on: data[5].toNumber()
         });
       });
       promises.push(p);
