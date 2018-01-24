@@ -49,7 +49,6 @@ window.App = {
         let contract = instance;
 
         $('#create-task-button').click(function() {
-
             return contract.createTask({
                 from: account,
                 value: web3.toWei(Number($('#bounty').val()), "ether")
@@ -68,6 +67,11 @@ window.App = {
         $('#open-tasks').on('click', '.take-task-button', function() {
           let task_id = Number($(this).closest('tr').data('id')) - 1;
           return contract.assignTask(task_id, {from: account});
+        });
+
+        $('#assignee-tasks').on('click', '.cancel-button', function() {
+          let task_id = Number($(this).closest('tr').data('id')) - 1;
+          return contract.rollbackAssignment(task_id, {from: account});
         });
       });
 
@@ -159,6 +163,12 @@ window.App = {
     }
 
     function renderAssigneeTasksRow(task) {
+      let actions = '';
+      if (task.status === 1) {
+        // Display "Cancel" button only for tasks with status "Assigned"
+        actions += '<button class="btn btn-danger cancel-button">Cancel</button>';
+      }
+      actions += '<button class="btn btn-success">Resolve</button>';
       return '<tr data-id="' + task.id + '">' +
         '                    <td>' + task.id + '</td>' +
         '                    <td> - </td>' +
@@ -166,8 +176,7 @@ window.App = {
         '                    <td>' + task.owner + '</td>' +
         '                    <td>' + TASK_STATUSES[task.status] + '</td>' +
         '                    <td class="actions">' +
-        '                       <button class="btn btn-danger">Cancel</button>' +
-        '                       <button class="btn btn-success">Resolve</button>' +
+                                actions +
         '                    </td>' +
         '</tr>';
     }
